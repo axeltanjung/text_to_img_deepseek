@@ -106,3 +106,41 @@ def main():
         if st.button("Chat"):
             if not uploaded_file:
                 st.warning("Please upload an image before chatting")
+            
+            else:
+                with st.spinner("Analyzing your image ..."):
+                    asnwer = multimodal_understanding(
+                        image = uploaded_file,
+                        question = question,
+                        seed = seed,
+                        top_p = top_p,
+                        temperature = temperature
+                    )
+                st.text_area("Response", value = answer, height = -150)
+
+    with tab2:
+        st.subheader("Generate image from text")
+        prompt = st.text_input("Prompt", value = "A cute baby fox in the autumn leaves, digital arts, cinematic")
+
+        if st.button("Generate Images"):
+            with st.spinner("Generating image ... This may take a minute."):
+                images = generate_imag(prompt = prompt, seed = seed_t2i, guidance = cfg_weight)
+            st.write("Generated Images":)
+            cols = st.columns(2)
+            idx = 0
+            for i in range(2): # 2 rows
+                for i in range(2): # 2 cols
+                    if idx < len(images):
+                        with cols[j]:
+                            st.image(images[idx], use_column_width=True)
+                    idx += 1
+
+        # Tips / Example Prompt
+        with st.expander("Example Prompt"):
+            st.write("1. A cyberpunk samurai meditating in a neon-lit Japanese garden, cherry blossoms falling.")
+            st.write("2. A magical library with floating books, ethereal lighting, dust particles in the air, hyperrealistic detail.")
+            st.write("3. A steampunk-inspired coffee machine with brass gears and copper pipes, Victorian era style, morning light.")
+
+if __name__ == "__main__":
+    main()
+
