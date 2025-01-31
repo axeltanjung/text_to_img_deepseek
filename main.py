@@ -1,3 +1,4 @@
+import streamlit as st
 import torch
 from transformers import AutoModelForCausalLM
 from janus.models import MultiModalityCasualLM, VLChatProcessor
@@ -67,3 +68,41 @@ def generate(
     # 2 Iteratively sample image tokens with CFG
     # 3 Decode to final images and save them
 generate(vl_gpt, processor, prompt)
+
+# ------------------------------------------------------------------------------
+# Create streamlit app
+# ------------------------------------------------------------------------------
+def main():
+    st.title("Streamlit Demo")
+
+    # Create tab
+    tab1, tab2 = st.tabs(["Multimodal Understanding", "Text-to-Image Generation"])
+
+    # Sidebar for image upload and parameter
+    with st.sidebar():
+        st.header("Image Upload")
+        uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+
+        st.header("Parameters")
+        
+        # Multimodal understanding parameters
+        with st.expander("Multimodal Understanding", expanded=True):
+            seed = st.number_input("Seed", min_value=0, value=42, step=1)
+            top_p = st.slider("Top-p", min_value=0.0, max_value=1.0, value=0.9, step=0.05)
+            temperature = st.slider("Temperature", min_value=0.0, max_value=1.0, value=0.1, step=0.05)
+        
+        # Text-to-Image Generation parameters
+        with st.expander("Text-to-Image Settings", expanded=True):
+            seed_t2i = st.number_input("Seed", min_value=0, value=12345, step=1)
+            cfg_weight = st.slider("CFG Weight", min_value=1.0, max_value=10.0, value=5.0, step=0.5)
+
+    # Main content
+    with tab1:
+        st.subheader("Ask a question about the image")
+        if uploaded_file:
+            st.image(uploaded_file, use_column_width=True)
+        question = st.text_input("Question", value = "Explain the image")
+
+        if st.button("Chat"):
+            if not uploaded_file:
+                st.warning("Please upload an image before chatting")
