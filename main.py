@@ -1,8 +1,8 @@
 import streamlit as st
 import torch
 from transformers import AutoConfig, AutoModelForCausalLM
-from janus.models import MultiModalityCasualLM, VLChatProcessor
-from janus.utils.io import load_pil_images
+from Janus.janus.models import MultiModalityCausalLM, VLChatProcessor
+from Janus.janus.utils.io import load_pil_images
 import numpy as np
 import PIL.Image
 import os
