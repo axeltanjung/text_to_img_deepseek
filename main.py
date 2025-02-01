@@ -104,7 +104,7 @@ def generate(
     
     # Expand input token for conditional and unconditional branches
     tokens = torch.zeros((parallel_size*2, len(input_ids)), dtype = torch.int).to(cuda_device)
-    for i in range(parallel_size*):
+    for i in range(parallel_size*2):
         tokens[i, :] = input_ids
         if i % 2 != 0:
             tokens[i, 1:-1] = vl_chat_processor.pad_id
@@ -183,7 +183,7 @@ def generate_image(prompt, seed=None, guidance=5):
 
     input_ids = torch.LongTensor(tokenizer.encode(text))
     output, patches = generate(
-        input_ids = input_ids,
+        input_ids,
         width // 16 * 16,
         height // 16 * 16,
         parallel_size = parallel_size,
@@ -253,8 +253,8 @@ def main():
 
         if st.button("Generate Images"):
             with st.spinner("Generating image ... This may take a minute."):
-                images = generate_imag(prompt = prompt, seed = seed_t2i, guidance = cfg_weight)
-            st.write("Generated Images":)
+                images = generate_image(prompt = prompt, seed = seed_t2i, guidance = cfg_weight)
+            st.write("Generated Images:")
             cols = st.columns(2)
             idx = 0
             for i in range(2): # 2 rows
